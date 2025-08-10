@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .popup {
+            background-color: #fff;
+            border: 2px solid #000;
+            padding: 20px;
+            position: fixed;
+            top: 20%;
+            left: 35%;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+    </style>
+    <script>
+        function checkForNewLogs() {
+            fetch('/new_logs')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.new_domain) {
+                        document.getElementById("popup").style.display = "block";
+                        document.getElementById("blockedDomain").innerText = data.new_domain;
+                        document.getElementById("domainInput").value = data.new_domain;
+                    }
+                });
+        }
+        setInterval(checkForNewLogs, 3000);
+    </script>
+</head>
+<body class="container" style="font-family: Arial; background-color: #f4f4f4; padding: 20px;">
+
+    <h1>🛡️ Admin Dashboard</h1>
+
+    <div class="section">
+        <h2>🚫 Blocked Sites</h2>
+        <ul>
+            {% for site in blocked_sites %}
+                <li>{{ site }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>📜 Access Logs</h2>
+        <ul>
+            {% for log in logs|reverse %}
+                <li>{{ log }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>📬 Unblock Requests</h2>
+        {% if unblock_requests %}
+            <ul>
+                {% for domain, reason in unblock_requests %}
+                    <li>
+                        <b>{{ domain }}</b> — "{{ reason }}"
+                        <form method="POST" action="/unblock" style="display:inline;">
+                            <input type="hidden" name="domain" value="{{ domain }}">
+                            <button type="submit">Unblock</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No unblock requests.</p>
+        {% endif %}
+    </div>
+
+    <!-- Real-time Blocked Site Popup -->
+    <div id="popup" class="popup">
+        <h3>🚨 Blocked Site Accessed!</h3>
+        <p>User tried to access: <b id="blockedDomain"></b></p>
+        <form action="/allow" method="POST">
+            <input type="hidden" name="domain" id="domainInput">
+            <input type="password" name="password" placeholder="Enter admin password" required>
+            <button type="submit">Allow</button>
+        </form>
+    </div>
+
+    <footer>&copy; 2025 Proxy System</footer>
+</body>
+</html>

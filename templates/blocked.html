@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blocked Site</title>
+   <script>
+    const domain = "{{ domain }}";
+
+    function checkStatus() {
+        fetch(`/check-unblocked?domain=${domain}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.unblocked) {
+                    document.body.innerHTML = `<h1>✅ Site unblocked by admin. Redirecting in 5 seconds...</h1>`;
+                    setTimeout(() => {
+                        window.location.href = `/proxy?url=https://${domain}`;
+                    }, 5000);
+                }
+            });
+    }
+
+    setInterval(checkStatus, 3000);
+</script>
+
+</head>
+<body style="font-family: sans-serif; text-align: center; padding: 50px;">
+    <h1>🚫 This site ({{ domain }}) is blocked</h1>
+    <p id="status">Waiting for admin approval...</p>
+
+    {% if not requested %}
+    <form action="/request-unblock" method="POST">
+        <input type="hidden" name="domain" value="{{ domain }}">
+        <p>Enter reason to request unblock:</p>
+        <textarea name="reason" required></textarea><br><br>
+        <button type="submit">Send Request</button>
+    </form>
+    {% else %}
+    <p>✅ Request sent to admin. Awaiting approval...</p>
+    {% endif %}
+</body>
+</html>

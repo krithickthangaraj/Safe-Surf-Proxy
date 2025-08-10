@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="refresh" content="5;url=https://{{ domain }}">
+    <title>Unblocked</title>
+</head>
+<body style="font-family: sans-serif; text-align: center; padding: 50px;">
+    <h1>✅ Site {{ domain }} has been unblocked!</h1>
+    <p>Redirecting in <span id="countdown">5</span> seconds...</p>
+
+    <script>
+        let seconds = 5;
+        const countdown = document.getElementById("countdown");
+        const interval = setInterval(() => {
+            seconds--;
+            countdown.innerText = seconds;
+            if (seconds === 0) clearInterval(interval);
+        }, 1000);
+    </script>
+</body>
+</html>

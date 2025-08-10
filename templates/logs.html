@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blocked Attempts Log</title>
+</head>
+<body>
+    <h1>Blocked Access Attempts</h1>
+    <ul>
+        {% for line in logs %}
+            <li>{{ line }}</li>
+        {% endfor %}
+    </ul>
+    <a href="/">← Back to Dashboard</a>
+</body>
+</html>
